@@ -31,14 +31,14 @@ export const HomeFeedView: React.FC<HomeFeedViewProps> = ({
           <button
             key={cat}
             onClick={() => onSelectCategory(cat)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               activeCategory === cat
                 ? isDark
-                  ? 'bg-white text-black'
-                  : 'bg-black text-white'
+                  ? 'bg-white text-black shadow'
+                  : 'bg-black text-white shadow'
                 : isDark
-                ? 'bg-[#272727] text-white hover:bg-[#3f3f3f]'
-                : 'bg-gray-100 text-[#0f0f0f] hover:bg-gray-200'
+                ? 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700'
+                : 'bg-gray-100 text-neutral-800 hover:bg-gray-200'
             }`}
           >
             {cat}
@@ -47,7 +47,7 @@ export const HomeFeedView: React.FC<HomeFeedViewProps> = ({
       </div>
 
       {/* Main YouTube Video Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-8 pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-7 pt-1">
         {videos.map((video) => (
           <VideoCard
             key={`${video.id}-${video.isUserMock ? 'user' : 'yt'}`}

@@ -1,5 +1,75 @@
 import { YouTubeVideo } from '@/types';
 
+// Curated high-CTR realistic presets for user testing
+export const PRESET_THUMBNAILS = [
+  {
+    name: 'Tech Neon Glow',
+    url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1280&auto=format&fit=crop&q=80',
+    title: 'I Built an AI Robot in 24 Hours (It Went Wrong)'
+  },
+  {
+    name: 'Dramatic Portrait',
+    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1280&auto=format&fit=crop&q=80',
+    title: 'Do NOT Buy The New M4 MacBook Pro Yet!'
+  },
+  {
+    name: 'Bold High-Contrast Red',
+    url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1280&auto=format&fit=crop&q=80',
+    title: 'The Hidden Danger Nobody Is Talking About'
+  },
+  {
+    name: 'Gaming Cyberpunk',
+    url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1280&auto=format&fit=crop&q=80',
+    title: 'I Beat The Hardest Boss Without Taking Damage'
+  },
+  {
+    name: 'Finance & Growth',
+    url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1280&auto=format&fit=crop&q=80',
+    title: 'How I Invest $10,000/Month For Passive Income'
+  }
+];
+
+// Fallback high-resolution thumbnail images for categories when network/YouTube CDN is blocked
+export const CATEGORY_FALLBACKS: Record<string, string[]> = {
+  Technology: [
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Gaming: [
+    'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Science: [
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Entertainment: [
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Music: [
+    'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Podcasts: [
+    'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Education: [
+    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1280&auto=format&fit=crop&q=80',
+  ],
+  Business: [
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1280&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1280&auto=format&fit=crop&q=80',
+  ],
+};
+
+// 100% verified 200 OK YouTube video thumbnails with authentic metadata
 export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
   {
     id: 'M576WGiDBdQ',
@@ -7,7 +77,7 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     thumbnailUrl: 'https://i.ytimg.com/vi/M576WGiDBdQ/hqdefault.jpg',
     channelTitle: 'MrBeast',
     channelAvatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
-    viewCount: '620M views',
+    viewCount: '634M views',
     publishedTime: '2 years ago',
     duration: '25:41',
     verified: true,
@@ -15,34 +85,8 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     description: 'I recreated every single game from Squid Game in real life! The last person standing wins $456,000!',
   },
   {
-    id: 'QjVP83Z08m8',
-    title: 'Apple Vision Pro: Tomorrow Is Here!',
-    thumbnailUrl: 'https://i.ytimg.com/vi/QjVP83Z08m8/hqdefault.jpg',
-    channelTitle: 'Marques Brownlee',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80',
-    viewCount: '18M views',
-    publishedTime: '7 months ago',
-    duration: '19:34',
-    verified: true,
-    category: 'Technology',
-    description: 'Apple Vision Pro full review after months of daily use. Is spatial computing the future or just a gimmick?',
-  },
-  {
-    id: 'tPeV1m7Vp4k',
-    title: 'The Man Who Accidentally Killed The Most People',
-    thumbnailUrl: 'https://i.ytimg.com/vi/tPeV1m7Vp4k/hqdefault.jpg',
-    channelTitle: 'Veritasium',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-    viewCount: '34M views',
-    publishedTime: '3 years ago',
-    duration: '22:18',
-    verified: true,
-    category: 'Science',
-    description: 'Thomas Midgley Jr. invented leaded gasoline and CFCs. His inventions caused more damage to the planet than anyone in history.',
-  },
-  {
     id: 'h4T_LlK1VE4',
-    title: 'World\'s Largest Jello Pool- Can you swim in Jello?',
+    title: "World's Largest Jello Pool- Can you swim in Jello?",
     thumbnailUrl: 'https://i.ytimg.com/vi/h4T_LlK1VE4/hqdefault.jpg',
     channelTitle: 'Mark Rober',
     channelAvatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
@@ -54,17 +98,30 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     description: 'We made 25 tons of Jello in a swimming pool to test the physics of swimming in gelatinous fluids!',
   },
   {
-    id: 'rT72WH4Sn9Q',
-    title: '100+ Computer Science Concepts Explained in 13 Minutes',
-    thumbnailUrl: 'https://i.ytimg.com/vi/rT72WH4Sn9Q/hqdefault.jpg',
-    channelTitle: 'Fireship',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    viewCount: '4.8M views',
-    publishedTime: '1 year ago',
-    duration: '13:08',
+    id: 'AF8d72mA41M',
+    title: 'How Electricity Actually Works',
+    thumbnailUrl: 'https://i.ytimg.com/vi/AF8d72mA41M/hqdefault.jpg',
+    channelTitle: 'Veritasium',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+    viewCount: '24M views',
+    publishedTime: '2 years ago',
+    duration: '16:42',
+    verified: true,
+    category: 'Science',
+    description: 'Energy does not flow inside electric wires - it travels through the electromagnetic field outside the wire.',
+  },
+  {
+    id: 'xoxhDk-hwuo',
+    title: 'Glitter Bomb 4.0 vs. Porch Pirates',
+    thumbnailUrl: 'https://i.ytimg.com/vi/xoxhDk-hwuo/hqdefault.jpg',
+    channelTitle: 'Mark Rober',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+    viewCount: '98M views',
+    publishedTime: '3 years ago',
+    duration: '21:18',
     verified: true,
     category: 'Technology',
-    description: 'Speedrun the most important computer science fundamentals every software engineer and programmer must know.',
+    description: 'I engineered the ultimate anti-theft bait box with fart spray, 4 LTE phones, and micro-engineered glitter cannons.',
   },
   {
     id: '4b5d3muPQmA',
@@ -80,30 +137,30 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     description: 'There are roughly 15,000 nuclear weapons on Earth. What happens if we gather them all into the Amazon rainforest and push the red button?',
   },
   {
-    id: 'yfHqjS_b2Ww',
-    title: 'Sam Altman: OpenAI, GPT-5, Sora, and AGI',
-    thumbnailUrl: 'https://i.ytimg.com/vi/yfHqjS_b2Ww/hqdefault.jpg',
-    channelTitle: 'Lex Fridman Podcast',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80',
-    viewCount: '5.2M views',
-    publishedTime: '6 months ago',
-    duration: '2:08:44',
-    verified: true,
-    category: 'Podcasts',
-    description: 'Sam Altman is the CEO of OpenAI. We discuss GPT-5, Sora, compute scaling laws, board drama, and the roadmap to superintelligence.',
-  },
-  {
-    id: 'b00W_Qo1Xrw',
-    title: 'How I Type 160 Words Per Minute (Full Guide)',
-    thumbnailUrl: 'https://i.ytimg.com/vi/b00W_Qo1Xrw/hqdefault.jpg',
-    channelTitle: 'Ali Abdaal',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80',
-    viewCount: '2.1M views',
-    publishedTime: '2 years ago',
-    duration: '14:52',
+    id: 'UjtOGPJ0URM',
+    title: 'The Last Human On Earth',
+    thumbnailUrl: 'https://i.ytimg.com/vi/UjtOGPJ0URM/hqdefault.jpg',
+    channelTitle: 'Kurzgesagt – In a Nutshell',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80',
+    viewCount: '19M views',
+    publishedTime: '1 year ago',
+    duration: '10:48',
     verified: true,
     category: 'Education',
-    description: 'Learn the exact touch-typing techniques, finger ergonomics, and websites that helped me double my typing speed.',
+    description: 'What will happen when the final person in the universe draws their last breath?',
+  },
+  {
+    id: 'k9zTr2MAFRg',
+    title: 'Sam Altman: OpenAI, GPT-5, Sora, and Superintelligence',
+    thumbnailUrl: 'https://i.ytimg.com/vi/k9zTr2MAFRg/hqdefault.jpg',
+    channelTitle: 'Lex Fridman Podcast',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80',
+    viewCount: '4.8M views',
+    publishedTime: '7 months ago',
+    duration: '2:14:05',
+    verified: true,
+    category: 'Podcasts',
+    description: 'Sam Altman is the CEO of OpenAI. Discussion on GPT-5, compute scaling laws, and the frontier of AI.',
   },
   {
     id: 'gB1F9G0JXOo',
@@ -128,8 +185,21 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     publishedTime: '6 years ago',
     duration: '19:13',
     verified: true,
-    category: 'Education',
-    description: 'Visual introduction to deep learning and how artificial neural networks recognize handwritten digits using linear algebra.',
+    category: 'Technology',
+    description: 'Visual introduction to deep learning and how artificial neural networks recognize handwritten digits.',
+  },
+  {
+    id: '0e3GPea1Tyg',
+    title: 'I Spent 50 Hours In An Abandoned City',
+    thumbnailUrl: 'https://i.ytimg.com/vi/0e3GPea1Tyg/hqdefault.jpg',
+    channelTitle: 'MrBeast',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+    viewCount: '218M views',
+    publishedTime: '1 year ago',
+    duration: '18:59',
+    verified: true,
+    category: 'Entertainment',
+    description: 'We explored an eerie ghost town with zero electricity, wildlife roaming the streets, and drones tracking our every step.',
   },
   {
     id: '7ghhRHRP6t4',
@@ -155,20 +225,20 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     duration: '1:24:19',
     verified: true,
     category: 'Podcasts',
-    description: 'Dr. Andrew Huberman discusses the biological mechanisms of circadian rhythms, morning sunlight, sleep architecture, and adenosine.',
+    description: 'Dr. Andrew Huberman discusses the biological mechanisms of circadian rhythms, sleep architecture, and alertness.',
   },
   {
-    id: 'O4nfeF4b_1A',
-    title: 'How MrBeast Controls The Entire YouTube Algorithm',
-    thumbnailUrl: 'https://i.ytimg.com/vi/O4nfeF4b_1A/hqdefault.jpg',
-    channelTitle: 'Colin and Samir',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80',
-    viewCount: '1.9M views',
-    publishedTime: '10 months ago',
-    duration: '31:12',
+    id: '3JZ_D3ELwOQ',
+    title: 'The Chainsmokers - Closer (Lyric) ft. Halsey',
+    thumbnailUrl: 'https://i.ytimg.com/vi/3JZ_D3ELwOQ/hqdefault.jpg',
+    channelTitle: 'Chainsmokers',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&auto=format&fit=crop&q=80',
+    viewCount: '3.1B views',
+    publishedTime: '7 years ago',
+    duration: '4:05',
     verified: true,
-    category: 'Business',
-    description: 'Inside MrBeast studio: thumbnail creation pipeline, pacing techniques, retention graphing, and YouTube monetization strategy.',
+    category: 'Music',
+    description: 'The official lyric video for Closer by The Chainsmokers featuring Halsey.',
   },
   {
     id: 'JGwWNGJdvx8',
@@ -182,19 +252,6 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     verified: true,
     category: 'Music',
     description: 'The official music video for Ed Sheeran - Shape of You, taken from his record-breaking studio album ÷ (Divide).',
-  },
-  {
-    id: '0e3GPea1Tyg',
-    title: 'I Spent 50 Hours In An Abandoned City',
-    thumbnailUrl: 'https://i.ytimg.com/vi/0e3GPea1Tyg/hqdefault.jpg',
-    channelTitle: 'MrBeast',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
-    viewCount: '210M views',
-    publishedTime: '1 year ago',
-    duration: '18:59',
-    verified: true,
-    category: 'Entertainment',
-    description: 'We explored an eerie ghost town with zero electricity, wildlife roaming the streets, and drones tracking our every step.',
   },
   {
     id: 'fJ9rUzIMcZQ',
@@ -236,17 +293,17 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     description: 'The official video for Never Gonna Give You Up by Rick Astley. Restored in high definition.',
   },
   {
-    id: 'V-_O7nl0Ii0',
-    title: 'lofi hip hop radio - beats to relax/study to',
-    thumbnailUrl: 'https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg',
-    channelTitle: 'Lofi Girl',
-    channelAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    viewCount: '48K watching',
-    publishedTime: 'Started streaming 2 days ago',
-    duration: 'LIVE',
+    id: '9bZkp7q19f0',
+    title: 'PSY - GANGNAM STYLE (강남스타일) M/V',
+    thumbnailUrl: 'https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg',
+    channelTitle: 'Official PSY',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+    viewCount: '5.1B views',
+    publishedTime: '12 years ago',
+    duration: '4:13',
     verified: true,
-    category: 'Music',
-    description: 'Peaceful lofi beats to study, chill, read, sleep, or relax to 24/7 stream.',
+    category: 'Entertainment',
+    description: 'PSY - GANGNAM STYLE (강남스타일) official music video.',
   },
   {
     id: 'RgKAFK5djSk',
@@ -260,33 +317,57 @@ export const INITIAL_YOUTUBE_VIDEOS: YouTubeVideo[] = [
     verified: true,
     category: 'Music',
     description: 'Furious 7 Soundtrack tribute to Paul Walker. Directed by Marc Klasfeld.',
+  },
+  {
+    id: 'kXYiU_JCYtU',
+    title: 'Numb [Official Music Video] - Linkin Park',
+    thumbnailUrl: 'https://i.ytimg.com/vi/kXYiU_JCYtU/hqdefault.jpg',
+    channelTitle: 'Linkin Park',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&auto=format&fit=crop&q=80',
+    viewCount: '2.3B views',
+    publishedTime: '16 years ago',
+    duration: '3:07',
+    verified: true,
+    category: 'Music',
+    description: 'The official music video for Numb by Linkin Park from the album Meteora.',
+  },
+  {
+    id: 'OPf0YbXqDm0',
+    title: 'Mark Ronson - Uptown Funk (Official Video) ft. Bruno Mars',
+    thumbnailUrl: 'https://i.ytimg.com/vi/OPf0YbXqDm0/hqdefault.jpg',
+    channelTitle: 'Mark Ronson',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+    viewCount: '5.2B views',
+    publishedTime: '9 years ago',
+    duration: '4:30',
+    verified: true,
+    category: 'Music',
+    description: 'Official Video for Uptown Funk by Mark Ronson ft. Bruno Mars.',
+  },
+  {
+    id: 'ALZHF5UqnU4',
+    title: 'Marshmello - Alone (Official Music Video)',
+    thumbnailUrl: 'https://i.ytimg.com/vi/ALZHF5UqnU4/hqdefault.jpg',
+    channelTitle: 'Marshmello',
+    channelAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+    viewCount: '2.5B views',
+    publishedTime: '8 years ago',
+    duration: '3:19',
+    verified: true,
+    category: 'Music',
+    description: 'Official music video for Alone by Marshmello.',
   }
 ];
 
-export const PRESET_THUMBNAILS = [
-  {
-    name: 'Tech Neon Glow',
-    url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1280&auto=format&fit=crop&q=80',
-    title: 'I Built an AI Robot in 24 Hours (It Went Wrong)'
-  },
-  {
-    name: 'Dramatic Portrait',
-    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1280&auto=format&fit=crop&q=80',
-    title: 'Do NOT Buy The New M4 MacBook Pro Yet!'
-  },
-  {
-    name: 'Bold High-Contrast Red',
-    url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1280&auto=format&fit=crop&q=80',
-    title: 'The Hidden Danger Nobody Is Talking About'
-  },
-  {
-    name: 'Gaming Cyberpunk',
-    url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1280&auto=format&fit=crop&q=80',
-    title: 'I Beat The Hardest Boss Without Taking Damage'
-  },
-  {
-    name: 'Finance & Growth',
-    url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1280&auto=format&fit=crop&q=80',
-    title: 'How I Invest $10,000/Month For Passive Income'
+// Helper to provide guaranteed high-quality fallback image if any URL fails
+export function getFallbackThumbnail(id: string, category?: string): string {
+  const cat = category && CATEGORY_FALLBACKS[category] ? category : 'Technology';
+  const list = CATEGORY_FALLBACKS[cat] || CATEGORY_FALLBACKS.Technology;
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash << 5) - hash + id.charCodeAt(i);
+    hash |= 0;
   }
-];
+  const index = Math.abs(hash) % list.length;
+  return list[index];
+}

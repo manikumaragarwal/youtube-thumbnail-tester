@@ -31,7 +31,7 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
   const isDark = settings.theme === 'dark';
 
   return (
-    <div className="max-w-[1780px] mx-auto px-4 sm:px-6 py-4">
+    <div className="max-w-[1760px] mx-auto px-4 sm:px-6 py-4">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Active Video Player & Engagement (8 cols on lg) */}
         <div className="lg:col-span-8 flex flex-col gap-3">
@@ -40,7 +40,8 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
             <img
               src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80"
               alt="Currently Playing Video"
-              className="w-full h-full object-cover opacity-85"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover opacity-90"
             />
 
             {/* Centered Play Button */}
@@ -50,13 +51,11 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
 
             {/* Bottom Video Controls Overlay */}
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 flex flex-col gap-2">
-              {/* Progress Bar */}
               <div className="w-full h-1 bg-white/30 rounded-full cursor-pointer relative group/bar">
                 <div className="w-1/3 h-full bg-red-600 rounded-full" />
                 <div className="absolute left-1/3 -top-1 w-3 h-3 bg-red-600 rounded-full shadow scale-0 group-hover/bar:scale-100 transition-transform" />
               </div>
 
-              {/* Controls row */}
               <div className="flex items-center justify-between text-white text-xs">
                 <div className="flex items-center gap-4">
                   <Play className="w-4 h-4 fill-white cursor-pointer" />
@@ -83,11 +82,11 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
 
           {/* Channel Row & Action Buttons */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
-            {/* Channel info */}
             <div className="flex items-center gap-3">
               <img
                 src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
                 alt="Creator"
+                referrerPolicy="no-referrer"
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div>
@@ -133,21 +132,21 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
           {/* Description Box */}
           <div
             className={`p-3.5 rounded-xl text-xs leading-relaxed ${
-              isDark ? 'bg-[#272727]/70 text-neutral-300' : 'bg-gray-100 text-neutral-700'
+              isDark ? 'bg-[#272727]/60 text-neutral-300' : 'bg-gray-100 text-neutral-700'
             }`}
           >
             <div className="font-semibold text-neutral-200 mb-1">
               892,104 views • Premiered 2 days ago
             </div>
             <p>
-              In this video we break down why thumbnails win or lose clicks in the sidebar recommendations! Look at the sidebar on the right to test how your thumbnail performs against other suggested videos.
+              In this video we test how thumbnails pop in the sidebar recommendation feed. Look to the right column to see how your test thumbnail stands out!
             </p>
           </div>
 
           {/* Comments Preview */}
           <div className="pt-2">
             <div className="flex items-center gap-4 mb-3">
-              <span className="text-base font-bold">1,842 Comments</span>
+              <span className="text-sm font-bold">1,842 Comments</span>
               <span className="text-xs text-neutral-400 flex items-center gap-1">
                 <MessageSquare className="w-3.5 h-3.5" /> Sort by
               </span>
@@ -156,38 +155,39 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
               <img
                 src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
                 alt="You"
+                referrerPolicy="no-referrer"
                 className="w-8 h-8 rounded-full object-cover"
               />
-              <div className="flex-1 border-b border-neutral-600 pb-1 text-xs text-neutral-400">
+              <div className="flex-1 border-b border-neutral-700 pb-1 text-xs text-neutral-500">
                 Add a comment...
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Watch Next Sidebar Recommendations (4 cols on lg) */}
+        {/* Right Column: Watch Next Sidebar Recommendations */}
         <div className="lg:col-span-4 flex flex-col gap-3">
           <div className="flex items-center justify-between pb-1">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <span>Watch Next Recommendations</span>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              Watch Next Recommendations
             </h3>
-            <span className="text-[11px] text-neutral-400">
+            <span className="text-[11px] text-neutral-500">
               {videos.length} videos
             </span>
           </div>
 
-          {/* Sidebar Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar">
-            {['All', 'Related', 'Recently uploaded', 'Watched'].map((chip, idx) => (
+          {/* Filter Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+            {['All', 'Related', 'Recently uploaded'].map((chip, idx) => (
               <button
                 key={chip}
-                className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                   idx === 0
                     ? isDark
                       ? 'bg-white text-black'
                       : 'bg-black text-white'
                     : isDark
-                    ? 'bg-[#272727] text-white hover:bg-[#333]'
+                    ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}
               >
@@ -196,8 +196,8 @@ export const SidebarWatchView: React.FC<SidebarWatchViewProps> = ({
             ))}
           </div>
 
-          {/* Sidebar Recommended Video List */}
-          <div className="flex flex-col gap-3">
+          {/* Recommended list */}
+          <div className="flex flex-col gap-2.5">
             {videos.map((video) => (
               <VideoCard
                 key={`sidebar-${video.id}-${video.isUserMock ? 'user' : 'yt'}`}

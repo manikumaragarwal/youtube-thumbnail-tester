@@ -81,6 +81,7 @@ export const MobileFeedView: React.FC<MobileFeedViewProps> = ({
                 <img
                   src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
                   alt="Avatar"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -126,6 +127,7 @@ export const MobileFeedView: React.FC<MobileFeedViewProps> = ({
                 <img
                   src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
                   alt="You"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
               </div>
