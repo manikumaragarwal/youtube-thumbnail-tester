@@ -1,101 +1,394 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState, useMemo, useCallback } from 'react';
+import {
+  YouTubeVideo,
+  ThumbnailVariant,
+  ViewMode,
+  CategoryFilter,
+  VisualTestSettings,
+} from '@/types';
+import { INITIAL_YOUTUBE_VIDEOS, PRESET_THUMBNAILS } from '@/lib/mock-youtube-data';
+import { Header } from '@/components/Header';
+import { Sidebar } from '@/components/Sidebar';
+import { TestControlPanel } from '@/components/TestControlPanel';
+import { HomeFeedView } from '@/components/views/HomeFeedView';
+import { SidebarWatchView } from '@/components/views/SidebarWatchView';
+import { SearchResultsView } from '@/components/views/SearchResultsView';
+import { MobileFeedView } from '@/components/views/MobileFeedView';
+import { SplitCompareView } from '@/components/views/SplitCompareView';
+import { BlindTestModal } from '@/components/BlindTestModal';
+import { Clock } from 'lucide-react';
+
+const CATEGORIES: CategoryFilter[] = [
+  'All',
+  'Technology',
+  'Gaming',
+  'Podcasts',
+  'Education',
+  'Entertainment',
+  'Business',
+  'Science',
+  'Music',
+];
+
+interface BlindTimerData {
+  timer: NodeJS.Timeout;
+  startTime: number;
+}
+
+declare global {
+  interface Window {
+    __blindTimer?: BlindTimerData;
+  }
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  // 1. User Thumbnail & Title Variants
+  const [variants, setVariants] = useState<ThumbnailVariant[]>([
+    {
+      id: 'var-1',
+      name: 'Variant A',
+      title: 'I Built a Quantum Computer in My Bedroom (It Actually Works!)',
+      thumbnailUrl: PRESET_THUMBNAILS[0].url,
+      channelTitle: 'Tech Pulse',
+      channelAvatarUrl:
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      viewCount: '24K views',
+      publishedTime: '3 hours ago',
+      duration: '14:28',
+      verified: true,
+    },
+    {
+      id: 'var-2',
+      name: 'Variant B',
+      title: 'Why Quantum Computers Are 1000x More Dangerous Than You Think',
+      thumbnailUrl: PRESET_THUMBNAILS[2].url,
+      channelTitle: 'Tech Pulse',
+      channelAvatarUrl:
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      viewCount: '24K views',
+      publishedTime: '3 hours ago',
+      duration: '14:28',
+      verified: true,
+    },
+  ]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [activeVariantId, setActiveVariantId] = useState<string>('var-1');
+  const activeVariant =
+    variants.find((v) => v.id === activeVariantId) || variants[0];
+
+  // 2. Base Competitor Videos (from YouTube)
+  const [baseVideos, setBaseVideos] = useState<YouTubeVideo[]>(INITIAL_YOUTUBE_VIDEOS);
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // 3. UI and View Settings
+  const [viewMode, setViewMode] = useState<ViewMode>('home');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isControlDrawerOpen, setIsControlDrawerOpen] = useState<boolean>(true);
+
+  // 4. Standout & CTR Testing Settings
+  const [settings, setSettings] = useState<VisualTestSettings>({
+    theme: 'dark',
+    blurAmount: 0,
+    grayscale: false,
+    scale: 1,
+    highlightUserVideo: true,
+    slotPosition: 1, // 2nd card in feed
+    showDangerZone: false,
+    blindMode: false,
+    blindStartTime: null,
+    blindFoundTime: null,
+  });
+
+  // 5. Blind Pop Test Game State
+  const [isBlindModalOpen, setIsBlindModalOpen] = useState<boolean>(false);
+  const [blindGameState, setBlindGameState] = useState<
+    'idle' | 'countdown' | 'playing' | 'success'
+  >('idle');
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+
+  // Fetch videos on category change
+  const handleSelectCategory = async (cat: CategoryFilter) => {
+    setActiveCategory(cat);
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/youtube?category=${encodeURIComponent(cat)}`);
+      const data = await res.json();
+      if (data.videos) {
+        setBaseVideos(data.videos);
+      }
+    } catch {
+      // Fallback
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch videos on search
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/youtube?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      if (data.videos) {
+        setBaseVideos(data.videos);
+      }
+    } catch {
+      // Fallback
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Add Variant
+  const handleAddVariant = () => {
+    const nextLetter = String.fromCharCode(65 + variants.length);
+    const newVariant: ThumbnailVariant = {
+      id: `var-${Date.now()}`,
+      name: `Variant ${nextLetter}`,
+      title: activeVariant.title,
+      thumbnailUrl: activeVariant.thumbnailUrl,
+      channelTitle: activeVariant.channelTitle,
+      channelAvatarUrl: activeVariant.channelAvatarUrl,
+      viewCount: activeVariant.viewCount,
+      publishedTime: activeVariant.publishedTime,
+      duration: activeVariant.duration,
+      verified: activeVariant.verified,
+    };
+    setVariants((prev) => [...prev, newVariant]);
+    setActiveVariantId(newVariant.id);
+  };
+
+  // Delete Variant
+  const handleDeleteVariant = (id: string) => {
+    if (variants.length <= 1) return;
+    const filtered = variants.filter((v) => v.id !== id);
+    setVariants(filtered);
+    if (activeVariantId === id) {
+      setActiveVariantId(filtered[0].id);
+    }
+  };
+
+  // Update Variant
+  const handleUpdateVariant = useCallback((id: string, updates: Partial<ThumbnailVariant>) => {
+    setVariants((prev) =>
+      prev.map((v) => (v.id === id ? { ...v, ...updates } : v))
+    );
+  }, []);
+
+  // Assemble full feed with User's video injected at slotPosition
+  const feedWithUserVideo = useMemo(() => {
+    const userVideo: YouTubeVideo = {
+      id: `user-video-${activeVariant.id}`,
+      title: activeVariant.title || 'My YouTube Video Title',
+      thumbnailUrl:
+        activeVariant.thumbnailUrl ||
+        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1280&auto=format&fit=crop&q=80',
+      channelTitle: activeVariant.channelTitle || 'My Channel',
+      channelAvatarUrl:
+        activeVariant.channelAvatarUrl ||
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      viewCount: activeVariant.viewCount || '10K views',
+      publishedTime: activeVariant.publishedTime || 'Just now',
+      duration: activeVariant.duration || '12:34',
+      verified: activeVariant.verified,
+      category: 'UserTest',
+      description:
+        'This is your mock video placed inside the real YouTube feed. Test how well your title and thumbnail stand out against neighboring videos.',
+      isUserMock: true,
+      variantName: activeVariant.name,
+    };
+
+    const list = [...baseVideos];
+    const safeIndex = Math.min(
+      Math.max(0, settings.slotPosition),
+      Math.max(0, list.length)
+    );
+    list.splice(safeIndex, 0, userVideo);
+    return list;
+  }, [baseVideos, activeVariant, settings.slotPosition]);
+
+  // Blind Pop Test Game Handlers
+  const handleStartBlindTest = () => {
+    setIsBlindModalOpen(true);
+    setBlindGameState('idle');
+  };
+
+  const handleStartGameCountdown = () => {
+    // Randomize slot position
+    const randomSlot = Math.floor(Math.random() * Math.min(12, baseVideos.length));
+    setSettings((prev) => ({
+      ...prev,
+      slotPosition: randomSlot,
+      highlightUserVideo: false, // Turn off gold border during blind test
+    }));
+    setIsControlDrawerOpen(false); // Close controls
+    setBlindGameState('countdown');
+
+    setTimeout(() => {
+      setBlindGameState('playing');
+      setIsBlindModalOpen(false); // Hide modal so user can view feed!
+      const startTime = performance.now();
+
+      // Setup global stopwatch ticker
+      const timer = setInterval(() => {
+        setElapsedTime(performance.now() - startTime);
+      }, 50);
+
+      window.__blindTimer = { timer, startTime };
+    }, 3000);
+  };
+
+  const handleUserVideoClick = () => {
+    if (blindGameState === 'playing' && window.__blindTimer) {
+      clearInterval(window.__blindTimer.timer);
+      const finalTime = performance.now() - window.__blindTimer.startTime;
+      setElapsedTime(finalTime);
+      setBlindGameState('success');
+      setIsBlindModalOpen(true);
+      // Turn highlight back on
+      setSettings((prev) => ({ ...prev, highlightUserVideo: true }));
+    }
+  };
+
+  const isDark = settings.theme === 'dark';
+
+  return (
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+        isDark ? 'bg-[#0f0f0f] text-[#f1f1f1]' : 'bg-white text-[#0f0f0f]'
+      }`}
+    >
+      {/* YouTube Navigation Header */}
+      <Header
+        settings={settings}
+        onUpdateSettings={setSettings}
+        viewMode={viewMode}
+        onChangeViewMode={setViewMode}
+        onSearch={handleSearch}
+        onToggleControlDrawer={() => setIsControlDrawerOpen((prev) => !prev)}
+        isControlDrawerOpen={isControlDrawerOpen}
+        onStartBlindTest={handleStartBlindTest}
+      />
+
+      {/* Floating Active Stopwatch when Blind Test is running */}
+      {blindGameState === 'playing' && (
+        <div className="fixed top-16 right-6 z-50 bg-gradient-to-r from-red-600 to-orange-600 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 animate-pulse border-2 border-white">
+          <Clock className="w-4 h-4 animate-spin" />
+          <span className="text-xs font-bold uppercase tracking-wider">
+            Spot Your Video:
+          </span>
+          <span className="font-mono text-sm font-black">
+            {(elapsedTime / 1000).toFixed(2)}s
+          </span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      )}
+
+      {/* Creator Testing Cockpit Panel (Collapsible) */}
+      <TestControlPanel
+        variants={variants}
+        activeVariantId={activeVariantId}
+        onSelectVariant={setActiveVariantId}
+        onUpdateVariant={handleUpdateVariant}
+        onAddVariant={handleAddVariant}
+        onDeleteVariant={handleDeleteVariant}
+        settings={settings}
+        onUpdateSettings={setSettings}
+        isOpen={isControlDrawerOpen}
+        onClose={() => setIsControlDrawerOpen(false)}
+        totalFeedVideos={baseVideos.length}
+      />
+
+      {/* Main YouTube Layout Container */}
+      <div className="flex-1 flex w-full">
+        {/* Left Navigation Sidebar (Shown in Home and Watch modes) */}
+        {viewMode !== 'mobile' && viewMode !== 'split' && (
+          <Sidebar
+            isDark={isDark}
+            isCollapsed={isSidebarCollapsed}
+            viewMode={viewMode}
+            onChangeViewMode={setViewMode}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        )}
+
+        {/* View Surface with Visual Filters (Squint Blur & Grayscale) */}
+        <main
+          className="flex-1 min-w-0 transition-all duration-150 overflow-x-hidden"
+          style={{
+            filter: `blur(${settings.blurAmount}px) grayscale(${
+              settings.grayscale ? 1 : 0
+            })`,
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {/* Loading Indicator */}
+          {isLoading && (
+            <div className="w-full h-1 bg-red-600 animate-pulse" />
+          )}
+
+          {/* VIEW 1: HOME FEED GRID */}
+          {viewMode === 'home' && (
+            <HomeFeedView
+              videos={feedWithUserVideo}
+              settings={settings}
+              categories={CATEGORIES}
+              activeCategory={activeCategory}
+              onSelectCategory={handleSelectCategory}
+              onUserVideoClick={handleUserVideoClick}
+            />
+          )}
+
+          {/* VIEW 2: WATCH PAGE WITH SIDEBAR RECOMMENDATIONS */}
+          {viewMode === 'sidebar' && (
+            <SidebarWatchView
+              videos={feedWithUserVideo}
+              settings={settings}
+              onUserVideoClick={handleUserVideoClick}
+            />
+          )}
+
+          {/* VIEW 3: SEARCH RESULTS LIST */}
+          {viewMode === 'search' && (
+            <SearchResultsView
+              videos={feedWithUserVideo}
+              settings={settings}
+              searchQuery={searchQuery}
+              onUserVideoClick={handleUserVideoClick}
+            />
+          )}
+
+          {/* VIEW 4: SMARTPHONE MOBILE APP FEED */}
+          {viewMode === 'mobile' && (
+            <MobileFeedView
+              videos={feedWithUserVideo}
+              settings={settings}
+              onUserVideoClick={handleUserVideoClick}
+            />
+          )}
+
+          {/* VIEW 5: A/B SPLIT TEST COMPARISON */}
+          {viewMode === 'split' && (
+            <SplitCompareView
+              variants={variants}
+              baseVideos={baseVideos}
+              settings={settings}
+            />
+          )}
+        </main>
+      </div>
+
+      {/* Blind Pop Test Game Modal */}
+      <BlindTestModal
+        isOpen={isBlindModalOpen}
+        onClose={() => setIsBlindModalOpen(false)}
+        onStartGame={handleStartGameCountdown}
+        gameState={blindGameState}
+        elapsedTime={elapsedTime}
+        onPlayAgain={handleStartGameCountdown}
+      />
     </div>
   );
 }
